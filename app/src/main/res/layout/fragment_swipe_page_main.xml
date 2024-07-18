@@ -6,10 +6,6 @@
     android:layout_height="match_parent"
     android:id="@+id/wraper">
 
-<!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
-<!--        android:id="@+id/swipe"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
     <LinearLayout
         android:id="@+id/indicator"
         android:layout_width="0dp"
@@ -221,8 +217,6 @@
                     android:layout_margin="12dp"/>
             </LinearLayout>
         </ScrollView>
-
-<!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 
 </LinearLayout>
 </layout>
