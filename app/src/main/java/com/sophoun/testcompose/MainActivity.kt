@@ -27,6 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sophoun.testcompose.features.FaceDetectionView
 import com.sophoun.testcompose.features.NfcDetector
+import com.sophoun.testcompose.features.ObjectDetectionView
 
 class MainActivity : ComponentActivity() {
 
@@ -82,6 +83,19 @@ class MainActivity : ComponentActivity() {
                                     }) {
                                     Text(text = "Face Detection")
                                 }
+                                Button(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 12.dp, end = 12.dp),
+                                    onClick = {
+                                        if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                                            navController.navigate("object_detection")
+                                        } else {
+                                            requestPermissions(arrayOf(Manifest.permission.CAMERA), 100)
+                                        }
+                                    }) {
+                                    Text(text = "Object Detection")
+                                }
                             }
                         }
                     }
@@ -91,6 +105,9 @@ class MainActivity : ComponentActivity() {
                 }
                 composable("face_detection") {
                     FaceDetectionView()
+                }
+                composable("object_detection") {
+                    ObjectDetectionView()
                 }
             }
         }

@@ -1,11 +1,8 @@
 package com.sophoun.testcompose.features
 
-import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.camera.view.LifecycleCameraController
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,19 +17,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import java.util.concurrent.Executors
+import com.sophoun.testcompose.components.CameraPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,65 +37,32 @@ fun FaceDetectionView() {
             })
         }
     ) { paddingValues ->
-        // Obtain the current context and lifecycle owner
-        val context = LocalContext.current
-        val lifecycleOwner = LocalLifecycleOwner.current
-
         val face = remember { mutableStateOf<Face?>(null) }
-
-        // Remember a LifecycleCameraController for this composable
-        val cameraController = remember {
-            LifecycleCameraController(context).apply {
-                cameraSelector = CameraSelector.Builder()
-                    .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
-                    .build()
-                setImageAnalysisAnalyzer(Executors.newSingleThreadExecutor(), FaceAnalyzer {
-                    face.value = it
-                })
-                // Bind the LifecycleCameraController to the lifecycleOwner
-                bindToLifecycle(lifecycleOwner)
-            }
-        }
 
         Box(modifier = Modifier
             .padding(paddingValues)
             .fillMaxSize()) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    // Initialize the PreviewView and configure it
-                    PreviewView(ctx).apply {
-                        scaleType = PreviewView.ScaleType.FILL_START
-                        implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                        controller = cameraController // Set the controller to manage the camera lifecycle
-                    }
-                },
-                onRelease = {
-                    // Release the camera controller when the composable is removed from the screen
-                    cameraController.unbind()
-                }
-            )
+            CameraPreview(imageAnalyzer = FaceAnalyzer {
+                face.value = it
+            })
 
-//            if(face.value != null) {
-//                val f = face.value!!
-//                Canvas(
-//                    modifier = Modifier.fillMaxSize()
-//                ) {
-//                    // draw round rect
-//                    drawRoundRect(
-//                        color = Color.Red,
-//                        topLeft = Offset(0f, 0f),
-//                        size = Size(
-//                            f.boundingBox.width().toFloat(),
-//                            f.boundingBox.height().toFloat()
-//                        ),
-//                        cornerRadius = CornerRadius.Zero,
-//                        style = Stroke(
-//                            width = 2f
-//                        )
-//                    )
-//                }
-//            }
+            face.value?.let {
+                val f = it.boundingBox.toComposeRect()
+                Canvas(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    // draw round rect
+                    drawRoundRect(
+                        color = Color.Red,
+                        topLeft = f.topLeft,
+                        size = f.size,
+                        cornerRadius = CornerRadius.Zero,
+                        style = Stroke(
+                            width = 2f
+                        )
+                    )
+                }
+            }
 
             Box(
                 modifier = Modifier
