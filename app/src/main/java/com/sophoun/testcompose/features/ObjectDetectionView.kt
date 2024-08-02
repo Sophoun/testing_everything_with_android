@@ -56,34 +56,34 @@ fun ObjectDetectionView() {
                 it?.labels?.forEach { label ->
                     println(label)
                 }
-            })
-            if(detectedObject.value != null) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val rect = detectedObject.value!!.boundingBox.toComposeRect()
-                    drawRoundRect(
-                        color = Color.Red,
-                        topLeft = rect.topLeft,
-                        size = rect.size,
-                        cornerRadius = CornerRadius.Zero,
-                        style = Stroke(
-                            width = 2f
+            }) {
+                if (detectedObject.value != null) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val rect = detectedObject.value!!.boundingBox.toComposeRect()
+                        drawRoundRect(
+                            color = Color.Red,
+                            topLeft = rect.topLeft,
+                            size = rect.size,
+                            cornerRadius = CornerRadius.Zero,
+                            style = Stroke(
+                                width = 2f
+                            )
                         )
-                    )
+                    }
                 }
-            }
 
-            if(detectedObject.value?.labels?.firstOrNull() != null) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
-                    val v = detectedObject.value!!.labels.first()
-                    val textDisplay = StringBuilder()
-                    textDisplay.append("Index: ${v.index}\n")
-                    textDisplay.append("Label: ${v.text}\n")
-                    textDisplay.append("Confident: ${v.confidence}\n")
-                    Text(text = textDisplay.toString())
+                if (detectedObject.value?.labels?.firstOrNull() != null) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
+                        val v = detectedObject.value!!.labels.first()
+                        val textDisplay = StringBuilder()
+                        textDisplay.append("Index: ${v.index}\n")
+                        textDisplay.append("Label: ${v.text}\n")
+                        textDisplay.append("Confident: ${v.confidence}\n")
+                        Text(text = textDisplay.toString())
+                    }
                 }
             }
         }
-
     }
 }
 

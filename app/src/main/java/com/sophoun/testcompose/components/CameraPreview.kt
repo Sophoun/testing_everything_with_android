@@ -9,9 +9,11 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
@@ -22,7 +24,8 @@ import java.util.concurrent.Executors
 fun CameraPreview(
     imageAnalyzer: Analyzer,
     modifier: Modifier = Modifier,
-    lensFacing: Int = CameraSelector.LENS_FACING_FRONT
+    lensFacing: Int = CameraSelector.LENS_FACING_FRONT,
+    content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -39,14 +42,14 @@ fun CameraPreview(
         }
     }
 
-    Box(modifier) {
+    Box(modifier.clipToBounds()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { ctx ->
                 // Initialize the PreviewView and configure it
                 PreviewView(ctx).apply {
-                    scaleType = PreviewView.ScaleType.FILL_START
-                    implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                    scaleType = PreviewView.ScaleType.FIT_CENTER
+                    implementationMode = PreviewView.ImplementationMode.PERFORMANCE
                     controller = cameraController // Set the controller to manage the camera lifecycle
                 }
             },
@@ -56,4 +59,6 @@ fun CameraPreview(
             }
         )
     }
+
+    content()
 }
