@@ -1,7 +1,7 @@
 package com.sophoun.testcompose.features
 
+import android.util.Size
 import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -19,47 +19,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toComposeRect
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntSize
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.objects.DetectedObject
 import com.google.mlkit.vision.objects.ObjectDetection
 import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions
+import com.sophoun.testcompose.components.BaseImageAnalyzer
 import com.sophoun.testcompose.components.CameraPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ObjectDetectionView() {
+    val detectedObject = remember {
+        mutableStateOf<DetectedObject?>(null)
+    }
+    val objectDetector = remember {
+        ObjectDetectionAnalyzer {
+            detectedObject.value = it
+            it?.labels?.forEach { label ->
+                println(label)
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Object Detection") })
         }
     ) { paddingValues ->
-        val detectedObject = remember {
-            mutableStateOf<DetectedObject?>(null)
-        }
-        val boxSize = remember {
-            mutableStateOf(IntSize.Zero)
-        }
-
         Box(
             Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .onSizeChanged {
-                    boxSize.value = it
-                }
         ) {
-            CameraPreview(imageAnalyzer = ObjectDetectionAnalyzer {
-                detectedObject.value = it
-                it?.labels?.forEach { label ->
-                    println(label)
-                }
-            }) {
-                if (detectedObject.value != null) {
-                    Canvas(modifier = Modifier.fillMaxSize()) {
-                        val rect = detectedObject.value!!.boundingBox.toComposeRect()
+            CameraPreview(imageAnalyzer = objectDetector) { previewSize, _ ->
+                objectDetector.setTargetResolution(Size(previewSize.width, previewSize.height))
+                Canvas(modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        rotationY = 180f
+                    }) {
+                    detectedObject.value?.boundingBox?.let {
+                        val rect = it.toComposeRect()
                         drawRoundRect(
                             color = Color.Red,
                             topLeft = rect.topLeft,
@@ -95,7 +97,7 @@ val options = ObjectDetectorOptions.Builder()
 
 val objectDetector = ObjectDetection.getClient(options)
 
-class ObjectDetectionAnalyzer(val onResult: (DetectedObject?) -> Unit) : ImageAnalysis.Analyzer {
+class ObjectDetectionAnalyzer(val onResult: (DetectedObject?) -> Unit) : BaseImageAnalyzer() {
 
     @androidx.annotation.OptIn(ExperimentalGetImage::class)
     override fun analyze(imageProxy: ImageProxy) {
@@ -105,7 +107,7 @@ class ObjectDetectionAnalyzer(val onResult: (DetectedObject?) -> Unit) : ImageAn
             objectDetector.process(image)
                 .addOnSuccessListener { detectedObjects ->
                     println("Detected ${detectedObjects.size} objects")
-                    if(detectedObjects.isEmpty()) {
+                    if (detectedObjects.isEmpty()) {
                         onResult(null)
                     }
                     detectedObjects.forEach {

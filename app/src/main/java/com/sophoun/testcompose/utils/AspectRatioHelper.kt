@@ -23,6 +23,9 @@ object AspectRatioHelper {
         return Size(newWidth, newHeight)
     }
 
+    /**
+     * Scale rect
+     */
     fun scaleRect(rect: Rect, aspectRatio: Float): Rect {
         return Rect(
             left = rect.left * aspectRatio,
