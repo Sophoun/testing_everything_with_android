@@ -1,25 +1,20 @@
 package com.sophoun.testcompose.features
 
-import android.util.Log
 import android.util.Size
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
@@ -33,19 +28,16 @@ import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.sophoun.testcompose.components.BaseImageAnalyzer
 import com.sophoun.testcompose.components.CameraPreview
+import com.sophoun.testcompose.components.CommonScaffoldWrapper
 import com.sophoun.testcompose.utils.pxToDp
 import java.util.concurrent.Executors
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FaceDetectionView() {
-    Scaffold(
-        topBar = {
-            TopAppBar(title = {
-                Text(text = "Face Detection")
-            })
-        }
-    ) { paddingValues ->
+fun FaceDetectionView(onBack: () -> Unit) {
+    CommonScaffoldWrapper(
+        title = "Face Detection",
+        onBack = onBack
+    ) {
         val faces = remember { mutableStateOf<List<Face>>(emptyList()) }
         val faceAnalyzer = remember {
             FaceAnalyzer { faceList ->
@@ -53,61 +45,53 @@ fun FaceDetectionView() {
             }
         }
 
-        Box(
+        CameraPreview(
             modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            contentAlignment = Alignment.TopStart
-        ) {
-            CameraPreview(
-                modifier = Modifier
-                    .wrapContentSize(),
-                imageAnalyzer = faceAnalyzer,
-                lensFacing = CameraSelector.LENS_FACING_FRONT,
-            ) { previewSize, _ ->
-                faceAnalyzer.setTargetResolution(Size(previewSize.width, previewSize.height))
-                Canvas(
-                    Modifier
-                        .size(previewSize.width.pxToDp(), previewSize.height.pxToDp())
-                        .graphicsLayer {
-                            rotationY = 180f
-                        }
-                ) {
-                    faces.value.forEach {
-                        val rect = it.boundingBox.toComposeRect()
-                        drawRoundRect(
-                            color = Color.Red,
-                            topLeft = rect.topLeft,
-                            size = rect.size,
-                            cornerRadius = CornerRadius.Zero,
-                            style = Stroke(
-                                width = 2f
-                            )
-                        )
+                .wrapContentSize(),
+            imageAnalyzer = faceAnalyzer,
+            lensFacing = CameraSelector.LENS_FACING_FRONT,
+        ) { previewSize, _ ->
+            faceAnalyzer.setTargetResolution(Size(previewSize.width, previewSize.height))
+            Canvas(
+                Modifier
+                    .size(previewSize.width.pxToDp(), previewSize.height.pxToDp())
+                    .graphicsLayer {
+                        rotationY = 180f
                     }
+            ) {
+                faces.value.forEach {
+                    val rect = it.boundingBox.toComposeRect()
+                    drawRoundRect(
+                        color = Color.Red,
+                        topLeft = rect.topLeft,
+                        size = rect.size,
+                        cornerRadius = CornerRadius.Zero,
+                        style = Stroke(
+                            width = 2f
+                        )
+                    )
                 }
+            }
 
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .align(Alignment.TopStart)
-                ) {
-                    faces.value.forEach { f ->
-                        val result = StringBuilder()
-                        result.append("Track ID: ${f.trackingId}\n")
-                        result.append("Left eye: ${f.leftEyeOpenProbability}\n")
-                        result.append("Right eye: ${f.rightEyeOpenProbability}\n")
-                        result.append("Smile: ${f.smilingProbability}\n")
-                        result.append("headEulerAngleX ${f.headEulerAngleX}\n")
-                        result.append("headEulerAngleY ${f.headEulerAngleY}\n")
-                        result.append("headEulerAngleZ ${f.headEulerAngleZ}\n")
-                        Text(
-                            modifier = Modifier
-                                .padding(16.dp),
-                            color = Color.White,
-                            text = result.toString()
-                        )
-                    }
+            Column(
+                Modifier
+                    .fillMaxSize()
+            ) {
+                faces.value.forEach { f ->
+                    val result = StringBuilder()
+                    result.append("Track ID: ${f.trackingId}\n")
+                    result.append("Left eye: ${f.leftEyeOpenProbability}\n")
+                    result.append("Right eye: ${f.rightEyeOpenProbability}\n")
+                    result.append("Smile: ${f.smilingProbability}\n")
+                    result.append("headEulerAngleX ${f.headEulerAngleX}\n")
+                    result.append("headEulerAngleY ${f.headEulerAngleY}\n")
+                    result.append("headEulerAngleZ ${f.headEulerAngleZ}\n")
+                    Text(
+                        modifier = Modifier
+                            .padding(16.dp),
+                        color = Color.White,
+                        text = result.toString()
+                    )
                 }
             }
         }

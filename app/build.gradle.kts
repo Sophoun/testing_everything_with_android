@@ -90,4 +90,6 @@ dependencies {
     // ML Kit
     implementation(libs.face.detection)
     implementation("com.google.mlkit:object-detection:17.0.1")
+    // OpenCV
+    implementation(libs.opencv)
 }
