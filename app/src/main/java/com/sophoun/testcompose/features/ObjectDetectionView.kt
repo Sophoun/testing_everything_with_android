@@ -41,7 +41,8 @@ fun ObjectDetectionView(onBack: () -> Unit) {
 
     CommonScaffoldWrapper(
         title = "Object Detection",
-        onBack = onBack
+        onBack = onBack,
+        keepScreenOn = true
     ) {
         CameraPreview(imageAnalyzer = objectDetector) { previewSize, _ ->
             objectDetector.setTargetResolution(Size(previewSize.width, previewSize.height))

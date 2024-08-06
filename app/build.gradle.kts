@@ -69,7 +69,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.viewpager2)
-    implementation( libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.navigation.compose)
     // CameraX core library using the camera2 implementation
     val camerax_version = "1.4.0-beta02"

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +35,8 @@ import java.util.concurrent.Executors
 fun FaceDetectionView(onBack: () -> Unit) {
     CommonScaffoldWrapper(
         title = "Face Detection",
-        onBack = onBack
+        onBack = onBack,
+        keepScreenOn = true
     ) {
         val faces = remember { mutableStateOf<List<Face>>(emptyList()) }
         val faceAnalyzer = remember {

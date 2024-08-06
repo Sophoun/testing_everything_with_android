@@ -1,33 +1,22 @@
-package com.sophoun.testcompose
+package com.sophoun.testcompose.activities
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ScrollView
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.sophoun.testcompose.databinding.ActivitySwipePageBinding
 import com.sophoun.testcompose.databinding.FragmentSwapPageSecondBinding
 import com.sophoun.testcompose.databinding.FragmentSwipePageMainBinding
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.lang.reflect.Field
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.roundToInt
 
 
-class SwipePageActivity: FragmentActivity() {
+class SwipePageActivity : FragmentActivity() {
 
     lateinit var binding: ActivitySwipePageBinding
 
@@ -45,7 +34,7 @@ class SwipePageActivity: FragmentActivity() {
         viewPager.currentItem = 1
         viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
         viewPager.isUserInputEnabled = false
-        viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 viewPager.isUserInputEnabled = position == 0
@@ -64,7 +53,7 @@ class SwipePageMainFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSwipePageMainBinding.inflate(inflater)
         return binding.root
     }
@@ -76,16 +65,17 @@ class SwipePageMainFragment : Fragment() {
         var isScrollReachTop = false
         var touchPoint = 0f
         binding.scrollview.setOnTouchListener { _, event ->
-            when(event.action) {
+            when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     touchPoint = event.y
                     isScrollReachTop = binding.scrollview.scrollY == 0
                     resetIndicatorSize()
                 }
+
                 MotionEvent.ACTION_MOVE -> {
                     val moveYDistance = (event.y - touchPoint).roundToInt()
-                    if(isScrollReachTop && moveYDistance > 0) {
-                        if(moveYDistance > 500) {
+                    if (isScrollReachTop && moveYDistance > 0) {
+                        if (moveYDistance > 500) {
                             moveTopFirstPage()
                         } else {
                             setIndicatorIconSize(moveYDistance / 2)
@@ -93,6 +83,7 @@ class SwipePageMainFragment : Fragment() {
                         }
                     }
                 }
+
                 MotionEvent.ACTION_UP -> {
                     resetIndicatorSize()
                 }
@@ -142,7 +133,7 @@ class SwipePageSecondFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSwapPageSecondBinding.inflate(inflater)
         return binding.root
     }

@@ -8,15 +8,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.sophoun.testcompose.activities.SwipePageActivity
 import com.sophoun.testcompose.components.CommonButton
 import com.sophoun.testcompose.components.CommonScaffoldWrapper
 import com.sophoun.testcompose.features.FaceDetectionView
@@ -90,6 +89,7 @@ fun Home(
             }
             CommonButton(title = "OpenCV") {
                 nav.navigate("open_cv")
+//                activity.startActivity(Intent(activity, OpenCVActivity::class.java))
             }
         }
     }
