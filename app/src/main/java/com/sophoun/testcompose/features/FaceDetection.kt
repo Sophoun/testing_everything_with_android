@@ -16,7 +16,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toComposeRect
@@ -70,6 +72,15 @@ fun FaceDetectionView(onBack: () -> Unit) {
                             width = 2f
                         )
                     )
+
+                    it.allLandmarks.forEach { l ->
+                        drawPoints(
+                            points = listOf(Offset(l.position.x, l.position.y)),
+                            color = Color.Green,
+                            pointMode = PointMode.Points,
+                            strokeWidth = 10f
+                        )
+                    }
                 }
             }
 
@@ -78,6 +89,7 @@ fun FaceDetectionView(onBack: () -> Unit) {
                     .fillMaxSize()
             ) {
                 faces.value.forEach { f ->
+
                     val result = StringBuilder()
                     result.append("Track ID: ${f.trackingId}\n")
                     result.append("Left eye: ${f.leftEyeOpenProbability}\n")
