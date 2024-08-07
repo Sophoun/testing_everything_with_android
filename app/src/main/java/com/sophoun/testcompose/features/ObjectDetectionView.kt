@@ -33,9 +33,6 @@ fun ObjectDetectionView(onBack: () -> Unit) {
     val objectDetector = remember {
         ObjectDetectionAnalyzer {
             detectedObject.value = it
-            it?.labels?.forEach { label ->
-                println(label)
-            }
         }
     }
 
@@ -96,7 +93,6 @@ class ObjectDetectionAnalyzer(val onResult: (DetectedObject?) -> Unit) : BaseIma
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
             objectDetector.process(image)
                 .addOnSuccessListener { detectedObjects ->
-                    println("Detected ${detectedObjects.size} objects")
                     if (detectedObjects.isEmpty()) {
                         onResult(null)
                     }

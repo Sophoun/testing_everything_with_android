@@ -92,4 +92,7 @@ dependencies {
     implementation("com.google.mlkit:object-detection:17.0.1")
     // OpenCV
     implementation(libs.opencv)
+    // Tensorflow Lite dependencies
+    implementation(libs.tensorflow.lite.task.vision.play.services)
+    implementation(libs.play.services.tflite.gpu)
 }
