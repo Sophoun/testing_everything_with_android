@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -36,6 +37,7 @@ fun TensorFlowLiteView(onBack: () -> Unit) {
 
     val objectDetector = remember {
         ObjectDetectorHelper(
+            threshold = 0.3f,
             context = context,
             objectDetectorListener = object : ObjectDetectorHelper.DetectorListener {
                 override fun onInitialized() {
@@ -53,16 +55,9 @@ fun TensorFlowLiteView(onBack: () -> Unit) {
                     imageWidth: Int
                 ) {
                     detections.value = results
-                    Log.d("TensorFlow", "onResults: ${results?.size} $inferenceTime")
-                    results?.forEach {
-                        Log.d("TensorFlow", "onResults: ${it.boundingBox}")
-                        it.categories.forEach {
-                            Log.d("TensorFlow", "onResults: category ${it.label} ${it.score}")
-                        }
-                    }
                 }
 
-            }, currentModel = ObjectDetectorHelper.MODEL_MOBILENETV1
+            }, currentModel = ObjectDetectorHelper.MODEL_EYE_GLASSES_LITE
         )
     }
 
@@ -74,13 +69,16 @@ fun TensorFlowLiteView(onBack: () -> Unit) {
     CommonScaffoldWrapper(title = "TensorFlow Lite", onBack = onBack) {
         CameraPreview(
             imageAnalyzer = tensorAnalyzer,
-            lensFacing = CameraSelector.LENS_FACING_BACK
+            lensFacing = CameraSelector.LENS_FACING_FRONT
         ) { previewSize, _ ->
             tensorAnalyzer.setTargetResolution(Size(previewSize.width, previewSize.height))
             Canvas(
                 modifier = Modifier
                     .width(previewSize.width.pxToDp())
                     .height(previewSize.height.pxToDp())
+                    .graphicsLayer {
+                        rotationY = 180f
+                    }
             ) {
                 detections.value?.forEach {
                     val rect = Rect(
