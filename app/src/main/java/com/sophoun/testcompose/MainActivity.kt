@@ -22,7 +22,7 @@ import com.sophoun.testcompose.features.FaceDetectionView
 import com.sophoun.testcompose.features.NfcDetector
 import com.sophoun.testcompose.features.ObjectDetectionView
 import com.sophoun.testcompose.features.OpenCvView
-import com.sophoun.testcompose.features.TensorFlowLiteView
+import com.sophoun.testcompose.features.TensorFlowLiteObjectDetectionView
 
 class MainActivity : ComponentActivity() {
 
@@ -55,8 +55,8 @@ class MainActivity : ComponentActivity() {
                         navController.popBackStack()
                     })
                 }
-                composable("tensorflow_lite") {
-                    TensorFlowLiteView {
+                composable("tensorflow_lite_object_detection") {
+                    TensorFlowLiteObjectDetectionView {
                         navController.popBackStack()
                     }
                 }
@@ -97,8 +97,8 @@ fun Home(
                 nav.navigate("open_cv")
 //                activity.startActivity(Intent(activity, OpenCVActivity::class.java))
             }
-            CommonButton(title = "TensorFlow Lite") {
-                nav.navigate("tensorflow_lite")
+            CommonButton(title = "TensorFlow Lite (Object detection)") {
+                nav.navigate("tensorflow_lite_object_detection")
             }
         }
     }
