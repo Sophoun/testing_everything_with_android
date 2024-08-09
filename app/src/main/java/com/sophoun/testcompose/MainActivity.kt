@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.sophoun.testcompose.activities.SwipePageActivity
 import com.sophoun.testcompose.components.CommonButton
 import com.sophoun.testcompose.components.CommonScaffoldWrapper
+import com.sophoun.testcompose.features.AmountOfLightDetectionView
 import com.sophoun.testcompose.features.FaceDetectionView
 import com.sophoun.testcompose.features.NfcDetector
 import com.sophoun.testcompose.features.ObjectDetectionView
@@ -60,6 +61,11 @@ class MainActivity : ComponentActivity() {
                         navController.popBackStack()
                     }
                 }
+                composable("amount_of_light_detection") {
+                    AmountOfLightDetectionView {
+                        navController.popBackStack()
+                    }
+                }
             }
         }
     }
@@ -99,6 +105,9 @@ fun Home(
             }
             CommonButton(title = "TensorFlow Lite (Object detection)") {
                 nav.navigate("tensorflow_lite_object_detection")
+            }
+            CommonButton(title = "Amount of light detection") {
+                nav.navigate("amount_of_light_detection")
             }
         }
     }
